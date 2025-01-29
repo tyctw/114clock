@@ -1,330 +1,86 @@
-<html><head>
-    <title>114 會考倒數計時器 | TYCTW會考落點分析平台</title>
-    <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap');
-  
-    :root {
-      --primary-color: #4a90e2;
-      --secondary-color: #ff6b6b;
-      --background-color: #f0f8ff;
-      --text-color: #333;
-      --light-text-color: #666;
-    }
-  
-    body {
-      font-family: 'Noto Sans TC', 'Microsoft JhengHei', Arial, sans-serif;
-      background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      margin: 0;
-      color: var(--text-color);
-      overflow-x: hidden;
-    }
-  
-    .container {
-      text-align: center;
-      background-color: rgba(255, 255, 255, 0.95);
-      padding: 3rem;
-      border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-      max-width: 600px;
-      width: 90%;
-      position: relative;
-      overflow: hidden;
-      transition: transform 0.3s ease;
-    }
-  
-    .container:hover {
-      transform: translateY(-5px);
-    }
-  
-    h1 {
-      color: var(--primary-color);
-      margin-bottom: 1.5rem;
-      font-size: 2.2rem;
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-      position: relative;
-      display: inline-block;
-    }
-  
-    h1::after {
-      content: '\f017';
-      font-family: 'Font Awesome 6 Free';
-      font-weight: 900;
-      font-size: 1.8rem;
-      margin-left: 10px;
-      color: var(--secondary-color);
-      vertical-align: middle;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-  
-    .container:hover h1::after {
-      opacity: 1;
-    }
-  
-    #countdown {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 1rem;
-      margin: 2rem 0;
-    }
-  
-    .time-unit {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-  
-    .time-value {
-      background-color: var(--primary-color);
-      color: white;
-      padding: 1rem;
-      border-radius: 12px;
-      min-width: 80px;
-      font-size: 2.5rem;
-      font-weight: bold;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-      position: relative;
-      overflow: hidden;
-      transition: all 0.3s ease;
-    }
-  
-    .time-value::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: linear-gradient(
-        to bottom right,
-        rgba(255, 255, 255, 0.3) 0%,
-        rgba(255, 255, 255, 0.2) 40%,
-        rgba(255, 255, 255, 0) 100%
-      );
-      transform: rotate(45deg);
-      transition: all 0.3s ease;
-    }
-  
-    .time-value:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-    }
-  
-    .time-value:hover::before {
-      left: 150%;
-    }
-  
-    .time-label {
-      font-size: 1rem;
-      margin-top: 0.5rem;
-      color: var(--light-text-color);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-  
-    .info {
-      color: var(--light-text-color);
-      font-size: 1.1rem;
-      margin-top: 2rem;
-      line-height: 1.6;
-      position: relative;
-      padding: 1rem;
-      background-color: rgba(74, 144, 226, 0.1);
-      border-radius: 10px;
-    }
-  
-    .info::before {
-      content: '\f05a';
-      font-family: 'Font Awesome 6 Free';
-      font-weight: 900;
-      margin-right: 10px;
-      color: var(--primary-color);
-    }
-  
-    .links {
-      margin-top: 2rem;
-      display: flex;
-      justify-content: center;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-  
-    .links a {
-      color: white;
-      text-decoration: none;
-      padding: 0.8rem 1.2rem;
-      background-color: var(--primary-color);
-      border-radius: 50px;
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-      display: inline-flex;
-      align-items: center;
-      font-weight: bold;
-    }
-  
-    .links a:hover {
-      background-color: #3a7cbd;
-      transform: translateY(-3px);
-      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    }
-  
-    .links a::after {
-      font-family: 'Font Awesome 6 Free';
-      font-weight: 900;
-      margin-left: 8px;
-    }
-  
-    .links a:first-child::after {
-      content: '\f35d';
-    }
-  
-    .links a:last-child::after {
-      content: '\f19d';
-    }
-  
-    .floating-icon {
-      position: absolute;
-      font-size: 1.5rem;
-      color: rgba(74, 144, 226, 0.2);
-      pointer-events: none;
-      animation: float 15s infinite ease-in-out;
-    }
-  
-    @keyframes float {
-      0%, 100% { transform: translate(0, 0) rotate(0deg); }
-      25% { transform: translate(var(--tx), var(--ty)) rotate(90deg); }
-      50% { transform: translate(calc(var(--tx) * -1), var(--ty)) rotate(180deg); }
-      75% { transform: translate(var(--tx), calc(var(--ty) * -1)) rotate(270deg); }
-    }
-  
-    .copyright {
-      position: absolute;
-      bottom: 10px;
-      left: 0;
-      right: 0;
-      text-align: center;
-      font-size: 0.8rem;
-      color: var(--light-text-color);
-      opacity: 0.7;
-      transition: opacity 0.3s ease;
-    }
-  
-    .copyright:hover {
-      opacity: 1;
-    }
-  
-    @media (max-width: 480px) {
-      .container {
-        padding: 2rem;
-      }
-      h1 {
-        font-size: 1.8rem;
-      }
-      .time-value {
-        font-size: 2rem;
-        min-width: 60px;
-      }
-    }
-  </style>
-  </head>
-  <body>
-    <div class="container">
-      <h1>114年國中教育會考倒數</h1>
-      <div id="countdown"></div>
-      <p class="info">114年會考日期：2025年5月17日至18日<br>加油！距離你的目標更進一步</p>
-      <div class="links">
-        <a href="https://sites.google.com/view/tyctw/">會考落點分析</a>
-        <a href="https://tyctw.github.io/StudySync/">使用高效讀書時鐘</a>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#1e3c72">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>114年國中會考倒數計時</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="main-header">
+    <nav class="nav-container">
+      <div class="logo">
+        <span class="logo-text">會考倒數</span>
       </div>
-      <div class="copyright">
-        &copy; 2025 TYCTW會考落點分析平台 . All rights reserved.
+      <ul class="nav-links">
+        <li><a href="https://cap.rcpet.edu.tw/" target="_blank">會考官網</a></li>
+        <li><a href="https://ceecc.vercel.app/" target="_blank">學測倒數</a></li>
+        <li><a href="https://tcte.onrender.com/" target="_blank">統測倒數</a></li>
+      </ul>
+      <button class="mobile-menu-btn" id="mobileMenuBtn">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </nav>
+  </header>
+
+  <div class="container">
+    <h1>114年國中教育會考倒數</h1>
+    <h2>考試日期: 114年5月17-18日</h2>
+    
+    <div class="countdown">
+      <div class="time-block">
+        <span id="days">--</span>
+        <label>天</label>
+      </div>
+      <div class="time-block">
+        <span id="hours">--</span>
+        <label>時</label>
+      </div>
+      <div class="time-block">
+        <span id="minutes">--</span>
+        <label>分</label>
+      </div>
+      <div class="time-block">
+        <span id="seconds">--</span>
+        <label>秒</label>
       </div>
     </div>
-  
-    <script>
-      function updateCountdown() {
-        const examDate = new Date('2025-05-17T08:00:00+08:00').getTime();
-        const now = new Date().getTime();
-        const timeLeft = examDate - now;
-  
-        const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-  
-        const countdownElement = document.getElementById('countdown');
-        countdownElement.innerHTML = `
-          <div class="time-unit">
-            <div class="time-value">${days}</div>
-            <div class="time-label">天</div>
-          </div>
-          <div class="time-unit">
-            <div class="time-value">${hours}</div>
-            <div class="time-label">時</div>
-          </div>
-          <div class="time-unit">
-            <div class="time-value">${minutes}</div>
-            <div class="time-label">分</div>
-          </div>
-          <div class="time-unit">
-            <div class="time-value">${seconds}</div>
-            <div class="time-label">秒</div>
-          </div>
-        `;
-  
-        if (timeLeft < 0) {
-          clearInterval(countdownTimer);
-          countdownElement.innerHTML = "<div class='time-value'>會考已開始！</div>";
-        }
-      }
-  
-      updateCountdown();
-      const countdownTimer = setInterval(updateCountdown, 1000);
-  
-      // 添加浮動圖標
-      const icons = ['\uf19d', '\uf02d', '\uf518', '\uf303', '\uf5da'];
-      const container = document.querySelector('.container');
-      for (let i = 0; i < 8; i++) {
-        const icon = document.createElement('i');
-        icon.className = 'floating-icon fas';
-        icon.innerHTML = icons[Math.floor(Math.random() * icons.length)];
-        icon.style.left = `${Math.random() * 100}%`;
-        icon.style.top = `${Math.random() * 100}%`;
-        icon.style.setProperty('--tx', `${(Math.random() - 0.5) * 50}px`);
-        icon.style.setProperty('--ty', `${(Math.random() - 0.5) * 50}px`);
-        container.appendChild(icon);
-      }
-                // 防止複製
-    document.addEventListener('copy', function(e) {
-      e.preventDefault();
-      return false;
-    });
 
-    // 防止截圖 (僅適用於部分瀏覽器)
-    document.addEventListener('keyup', function(e) {
-      if (e.key == 'PrintScreen') {
-        navigator.clipboard.writeText('');
-        alert('截圖功能已被禁用');
-      }
-    });
+    <div class="message">
+      <p>✨ 加油！距離會考還有... ✨</p>
+    </div>
 
-    // 防止右鍵點擊
-    document.addEventListener('contextmenu', function(e) {
-      e.preventDefault();
-    });
-
-    // 防止拖曳選擇文字
-    document.onselectstart = function() {
-      return false;
-    };
-    </script>
-  </body></html>
+    <div class="info">
+      <h3>📚 考試科目時程 📚</h3>
+      <ul>
+        <li>第一天 (5/17):
+          <ul class="sub-list">
+            <li>🌎 社會</li>
+            <li>➗ 數學</li>
+            <li>📖 國文</li>
+            <li>✍️ 寫作測驗</li>
+          </ul>
+        </li>
+        <li>第二天 (5/18):
+          <ul class="sub-list">
+            <li>🔬 自然</li>
+            <li>📚 英語閱讀</li>
+            <li>🎧 英語聽力</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    
+    <div class="copyright">
+      © 2025 TYCTW國中會考倒數計時器 | 設計開發：<a href="https://tyctw.github.io/" target="_blank">TYCTW</a><br>
+      本網站僅供教育使用，著作權所有，請勿用於商業用途
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
