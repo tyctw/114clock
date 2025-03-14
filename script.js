@@ -195,7 +195,7 @@ function animatePartnerCards() {
   const cards = document.querySelectorAll('.partner-card');
   cards.forEach((card, index) => {
     // Add icons to partner logos
-    const logos = ['📚', '✏️', '📝'];
+    const logos = ['📚', '✏️']; 
     card.querySelector('.partner-logo').textContent = logos[index % logos.length];
     
     // Add subtle animation
