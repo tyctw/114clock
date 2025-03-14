@@ -2,12 +2,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#1e3c72">
+  <meta name="theme-color" content="#2d1b69">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="description" content="114年國中教育會考倒數計時,考試時間,複習資源,會考備考">
+  <meta name="keywords" content="國中會考,會考倒數,114年會考,教育會考,會考時間,國中考試,會考日期">
   <title>114年國中會考倒數計時</title>
   <link rel="stylesheet" href="styles.css">
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    @keyframes fadeInUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0); }
+      50% { transform: translateY(-15px) rotate(2deg); }
+    }
+    .particle {
+      animation-name: float;
+      animation-timing-function: ease-in-out;
+      animation-iteration-count: infinite;
+    }
+  </style>
 </head>
 <body>
   <header class="main-header">
@@ -19,7 +36,7 @@
         <li><a href="https://rcpe.vercel.app/" target="_blank">會考落點</a></li>
         <li><a href="https://ceecc.vercel.app/" target="_blank">學測倒數</a></li>
         <li><a href="https://tcte.onrender.com/" target="_blank">統測倒數</a></li>
-        <li><a href="https://kaobar.godofsoul.com/" target="_blank" class="highlight">🌟 會考霸 🌟</a></li>
+        <li><a href="https://kaobar.godofsoul.com/" target="_blank" class="highlight"> 會考霸 </a></li>
       </ul>
       <button class="mobile-menu-btn" id="mobileMenuBtn">
         <span></span>
@@ -31,7 +48,7 @@
 
   <div class="container">
     <h1>114年國中教育會考倒數</h1>
-    <h2>考試日期: 114年5月17-18日</h2>
+    <div class="dates-badge">考試日期：114年5月17-18日</div>
     
     <div class="countdown">
       <div class="time-block">
@@ -53,42 +70,80 @@
     </div>
 
     <div class="message">
-      <p>✨ 加油！距離會考還有... ✨</p>
+      <p> 加油！距離會考還有... </p>
     </div>
 
     <div class="info">
-      <h3>📚 考試科目時程 📚</h3>
-      <ul>
-        <li>第一天 (5/17):
-          <ul class="sub-list">
-            <li>🌎 社會</li>
-            <li>➗ 數學</li>
-            <li>📖 國文</li>
-            <li>✍️ 寫作測驗</li>
+      <h3> 考試科目時程 </h3>
+      <div class="schedule-container">
+        <div class="day-schedule">
+          <div class="day-badge">第一天 (5/17)</div>
+          <ul class="subject-list">
+            <li><span class="subject-icon">📝</span> 社會</li>
+            <li><span class="subject-icon">🔢</span> 數學</li>
+            <li><span class="subject-icon">📚</span> 國文</li>
+            <li><span class="subject-icon">✍️</span> 寫作測驗</li>
           </ul>
-        </li>
-        <li>第二天 (5/18):
-          <ul class="sub-list">
-            <li>🔬 自然</li>
-            <li>📚 英語閱讀</li>
-            <li>🎧 英語聽力</li>
+        </div>
+        <div class="day-schedule">
+          <div class="day-badge">第二天 (5/18)</div>
+          <ul class="subject-list">
+            <li><span class="subject-icon">🧪</span> 自然</li>
+            <li><span class="subject-icon">📖</span> 英語閱讀</li>
+            <li><span class="subject-icon">🎧</span> 英語聽力</li>
           </ul>
-        </li>
-      </ul>
+        </div>
+      </div>
+    </div>
+    
+    <div class="partnership-section">
+      <h3> 合作夥伴專區</h3>
+      <div class="section-description">
+        <p>我們致力於提供優質的教育資源，歡迎學校、補習班、教育機構與我們合作，共同為學子們提供更好的備考輔助。</p>
+      </div>
+      
+      <form id="partnershipForm" class="partnership-form">
+        <input type="text" id="partnerName" placeholder="機構名稱" required>
+        <input type="email" id="partnerEmail" placeholder="聯絡信箱" required>
+        <select id="partnerType" required>
+          <option value="" disabled selected>-- 請選擇合作類型 --</option>
+          <option value="school">學校</option>
+          <option value="cram">補習班</option>
+          <option value="publisher">出版社</option>
+          <option value="other">其他教育機構</option>
+        </select>
+        <div class="cf-turnstile" data-sitekey="0x4AAAAAABAxXTyuJtsiCIU5" data-theme="dark"></div>
+        <button type="submit">提交合作意願</button>
+      </form>
+      
+      <div class="partners-grid">
+        <div class="partner-card">
+          <div class="partner-logo"></div>
+          <div class="partner-name">優質高中</div>
+        </div>
+        <div class="partner-card">
+          <div class="partner-logo"></div>
+          <div class="partner-name">會考補習班</div>
+        </div>
+        <div class="partner-card">
+          <div class="partner-logo"></div>
+          <div class="partner-name">明星出版社</div>
+        </div>
+      </div>
     </div>
     
     <div class="copyright">
-      © 2025 TYCTW國中會考倒數計時器 | 設計開發：<a href="https://rcpett.vercel.app/" target="_blank">TYCTW</a><br>
+      2025 TYCTW國中會考倒數計時器 | 設計開發：<a href="https://rcpett.vercel.app/" target="_blank">TYCTW</a><br>
       本網站僅供教育使用，著作權所有，請勿用於商業用途
     </div>
   </div>
   <div class="promo-banner">
     <a href="https://kaobar.godofsoul.com/" target="_blank">
-      <span class="icon">🎯</span>
+      <span class="icon">🚀</span>
       立即使用會考霸複習
-      <span class="icon">✨</span>
     </a>
   </div>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
   <script src="script.js"></script>
 </body>
 </html>
