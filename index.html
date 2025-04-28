@@ -1,8 +1,9 @@
-<html lang="zh-TW">
+<html lang="zh-TW" class="ios-check">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#2d1b69">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f0f9ff" media="(prefers-color-scheme: light)">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="description" content="114年國中教育會考倒數計時,考試時間,複習資源,會考備考">
@@ -10,6 +11,7 @@
   <title>114年國中會考倒數計時</title>
   <link rel="stylesheet" href="styles.css">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
   <style>
     @keyframes fadeInUp {
       from { transform: translateY(20px); opacity: 0; }
@@ -30,13 +32,14 @@
   <header class="main-header">
     <nav class="nav-container">
       <div class="logo">
-        <span class="logo-text">會考倒數</span>
+        <span class="logo-text"><i class='bx bx-time-five'></i> 會考倒數</span>
       </div>
       <ul class="nav-links">
-        <li><a href="https://rcpe.vercel.app/" target="_blank">會考落點</a></li>
-        <li><a href="https://ceecc.vercel.app/" target="_blank">學測倒數</a></li>
-        <li><a href="https://tcte.onrender.com/" target="_blank">統測倒數</a></li>
-        <li><a href="https://kaobar.godofsoul.com/" target="_blank" class="highlight"> 會考霸 </a></li>
+        <li><a href="https://rcpe.vercel.app/" target="_blank"><i class='bx bx-map'></i> 會考落點</a></li>
+        <li><a href="https://ceecc.vercel.app/" target="_blank"><i class='bx bx-calendar'></i> 學測倒數</a></li>
+        <li><a href="https://tcte.onrender.com/" target="_blank"><i class='bx bx-calendar-check'></i> 統測倒數</a></li>
+        <li><a href="https://kaobar.godofsoul.com/" target="_blank" class="highlight"><i class='bx bx-book-open'></i> 會考霸 </a></li>
+        <li><button id="theme-toggle" class="theme-toggle"><i class='bx bx-moon'></i></button></li>
       </ul>
       <button class="mobile-menu-btn" id="mobileMenuBtn">
         <span></span>
@@ -48,7 +51,34 @@
 
   <div class="container">
     <h1>114年國中教育會考倒數</h1>
-    <div class="dates-badge">考試日期：114年5月17-18日</div>
+    <div class="dates-badge"><i class='bx bx-calendar-event'></i> 考試日期：114年5月17-18日</div>
+    
+    <!-- 添加 rcpett 廣告欄位 -->
+    <div class="rcpett-ad-banner">
+      <div class="rcpett-ad-title">
+        <i class='bx bx-map-alt'></i> 全國會考落點分析系統
+      </div>
+      <div class="rcpett-ad-description">
+        精準分析，助您選擇最適合的理想學校。根據歷年會考數據分析，提供最精確的落點評估與志願選填建議。
+      </div>
+      <div class="rcpett-ad-features">
+        <div class="rcpett-feature">
+          <i class='bx bx-check-circle'></i> 精準分析
+        </div>
+        <div class="rcpett-feature">
+          <i class='bx bx-data'></i> 各區數據
+        </div>
+        <div class="rcpett-feature">
+          <i class='bx bx-book-content'></i> 學校資訊
+        </div>
+        <div class="rcpett-feature">
+          <i class='bx bx-calculator'></i> 成績模擬
+        </div>
+      </div>
+      <a href="https://rcpett.vercel.app/" target="_blank" class="rcpett-cta-button">
+        <i class='bx bx-search-alt'></i> 立即查詢落點
+      </a>
+    </div>
     
     <div class="countdown">
       <div class="time-block">
@@ -70,14 +100,14 @@
     </div>
 
     <div class="message">
-      <p> 加油！距離會考還有... </p>
+      <p><i class='bx bx-bulb'></i> 加油！距離會考還有... </p>
     </div>
 
     <div class="info">
-      <h3> 考試科目時程 </h3>
+      <h3><i class='bx bx-calendar-week'></i> 考試科目時程 </h3>
       <div class="schedule-container">
         <div class="day-schedule">
-          <div class="day-badge">第一天 (5/17)</div>
+          <div class="day-badge"><i class='bx bx-calendar-star'></i> 第一天 (5/17)</div>
           <ul class="subject-list">
             <li><span class="subject-icon">📝</span> 社會</li>
             <li><span class="subject-icon">🔢</span> 數學</li>
@@ -86,7 +116,7 @@
           </ul>
         </div>
         <div class="day-schedule">
-          <div class="day-badge">第二天 (5/18)</div>
+          <div class="day-badge"><i class='bx bx-calendar-star'></i> 第二天 (5/18)</div>
           <ul class="subject-list">
             <li><span class="subject-icon">🧪</span> 自然</li>
             <li><span class="subject-icon">📖</span> 英語閱讀</li>
@@ -97,7 +127,7 @@
     </div>
     
     <div class="partnership-section">
-      <h3> 合作夥伴專區</h3>
+      <h3><i class='bx bx-network-chart'></i> 合作夥伴專區</h3>
       <div class="section-description">
         <p>我們致力於提供優質的教育資源，歡迎學校、補習班、教育機構與我們合作，共同為學子們提供更好的備考輔助。</p>
       </div>
@@ -113,17 +143,21 @@
           <option value="other">其他教育機構</option>
         </select>
         <div class="cf-turnstile" data-sitekey="0x4AAAAAABAxXTyuJtsiCIU5" data-theme="dark"></div>
-        <button type="submit">提交合作意願</button>
+        <button type="submit"><i class='bx bx-send'></i> 提交合作意願</button>
       </form>
       
       <div class="partners-grid">
         <div class="partner-card">
-          <div class="partner-logo"></div>
+          <div class="partner-logo"><i class='bx bxs-school'></i></div>
           <div class="partner-name">學校</div>
         </div>
         <div class="partner-card">
-          <div class="partner-logo"></div>
+          <div class="partner-logo"><i class='bx bxs-book-reader'></i></div>
           <div class="partner-name">補習班</div>
+        </div>
+        <div class="partner-card">
+          <div class="partner-logo"><i class='bx bxs-book-bookmark'></i></div>
+          <div class="partner-name">出版社</div>
         </div>
       </div>
     </div>
@@ -135,10 +169,24 @@
   </div>
   <div class="promo-banner">
     <a href="https://kaobar.godofsoul.com/" target="_blank">
-      <span class="icon">🚀</span>
+      <span class="icon"><i class='bx bx-rocket'></i></span>
       立即使用會考霸複習
     </a>
   </div>
+  
+  <!-- 添加 rcpett 落點分析入口 -->
+  <div class="promo-banner" style="right: auto; left: 30px;">
+    <a href="https://rcpett.vercel.app/" target="_blank">
+      <span class="icon"><i class='bx bx-map'></i></span>
+      會考落點分析系統
+    </a>
+  </div>
+  
+  <!-- Mobile theme toggle -->
+  <button id="mobile-theme-toggle" class="mobile-theme-toggle">
+    <i class='bx bx-moon'></i>
+  </button>
+  
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
   <script src="script.js"></script>
   <!-- Google tag (gtag.js) -->
