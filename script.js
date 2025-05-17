@@ -238,6 +238,24 @@ document.addEventListener('DOMContentLoaded', () => {
   // Listen for orientation changes and resize events to adjust layout
   window.addEventListener('resize', handleOrientationChange);
   window.addEventListener('orientationchange', handleOrientationChange);
+
+  // 顯示歡迎彈出視窗
+  const modal = document.getElementById('welcomeModal');
+  const closeBtn = document.getElementById('modalCloseBtn');
+  
+  modal.classList.add('active');
+  
+  // 點擊彈出視窗外部關閉
+  modal.addEventListener('click', function(e) {
+    if (e.target === modal) {
+      modal.classList.remove('active');
+    }
+  });
+  
+  // 點擊關閉按鈕關閉
+  closeBtn.addEventListener('click', function() {
+    modal.classList.remove('active');
+  });
 });
 
 function detectIOSDevice() {

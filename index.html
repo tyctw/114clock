@@ -26,6 +26,110 @@
       animation-timing-function: ease-in-out;
       animation-iteration-count: infinite;
     }
+    
+    /* 彈出視窗樣式 */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .modal-content {
+      background: #ffffff;
+      padding: 2.5rem;
+      border-radius: 1.5rem;
+      max-width: 90%;
+      width: 500px;
+      text-align: center;
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      border: 2px solid var(--primary-color);
+      position: relative;
+    }
+    
+    .modal-close-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      background: #f3f4f6;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      color: #666666;
+    }
+    
+    .modal-close-btn:hover {
+      background: #e5e7eb;
+      color: #333333;
+      transform: rotate(90deg);
+    }
+    
+    .modal-close-btn i {
+      font-size: 1.5rem;
+    }
+    
+    .modal-overlay.active .modal-content {
+      transform: translateY(0);
+    }
+    
+    .modal-content h2 {
+      color: var(--primary-color);
+      margin-bottom: 1.5rem;
+      font-size: 1.8rem;
+    }
+    
+    .modal-content p {
+      margin-bottom: 1.5rem;
+      line-height: 1.8;
+      color: #333333;
+      font-size: 1.1rem;
+    }
+    
+    .modal-content .btn {
+      display: inline-block;
+      padding: 1rem 2.5rem;
+      background: var(--primary-color);
+      color: white;
+      border-radius: 0.8rem;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      font-size: 1.1rem;
+      box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
+    }
+    
+    .modal-content .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(56, 189, 248, 0.4);
+      background: var(--primary-color-dark);
+    }
+    
+    .modal-content .btn i {
+      margin-right: 0.5rem;
+      font-size: 1.2rem;
+    }
   </style>
 </head>
 <body>
@@ -189,6 +293,22 @@
   
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
   <script src="script.js"></script>
+  
+  <!-- 彈出視窗 -->
+  <div class="modal-overlay" id="welcomeModal">
+    <div class="modal-content">
+      <button class="modal-close-btn" id="modalCloseBtn">
+        <i class='bx bx-x'></i>
+      </button>
+      <h2><i class='bx bx-party'></i> 恭喜完成會考！</h2>
+      <p>感謝您使用我們的會考倒數計時網站，祝福各位考生都能金榜題名！</p>
+      <p>想要了解自己的落點分析嗎？立即使用我們的會考落點分析系統，為您提供最精準的選校建議！</p>
+      <a href="https://rcpett.vercel.app/" target="_blank" class="btn">
+        <i class='bx bx-map'></i> 前往落點分析
+      </a>
+    </div>
+  </div>
+  
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-H9X7EC127P"></script>
 <script>
