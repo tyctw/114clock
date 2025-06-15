@@ -2,25 +2,6 @@
 const targetDate = new Date('2026-05-23T00:00:00');
 const startDate = new Date('2023-05-23T00:00:00'); // 假設從2023年5月23日開始倒數
 
-// 激勵語錄數組
-const motivationalQuotes = [
-    "加油！堅持就是勝利！",
-    "今天的努力，是明天的實力。",
-    "沒有人可以替你學習，除了你自己。",
-    "每一次的努力，都是為了更好的自己。",
-    "不要放棄，你正在取得進步。",
-    "成功不是偶然的，而是日積月累的結果。",
-    "每一個問題都是成長的機會。",
-    "相信自己，你擁有無窮的潛力。",
-    "專注當下，不要為過去後悔，不要為未來焦慮。",
-    "正確的時間做正確的事，就是效率。",
-    "知識就是力量，學習讓你更強大。",
-    "勝利屬於最堅持的人。",
-    "行動是治愈恐懼的良藥。",
-    "努力的路上，你並不孤單。",
-    "好好休息，才能走得更遠。 "
-];
-
 // 備考小貼士數組
 const studyTips = [
     "建立讀書計劃，合理分配時間",
@@ -187,31 +168,6 @@ if (savedTheme) {
         targetBtn.click();
     }
 }
-
-// 每日激勵語功能
-const quoteText = document.getElementById('quote-text');
-const newQuoteBtn = document.getElementById('new-quote-btn');
-
-function getRandomQuote() {
-    const randomIndex = Math.floor(Math.random() * motivationalQuotes.length);
-    return motivationalQuotes[randomIndex];
-}
-
-// 更新激勵語
-function updateQuote() {
-    const quote = getRandomQuote();
-    
-    // 使用淡出淡入效果
-    quoteText.style.opacity = '0';
-    
-    setTimeout(() => {
-        quoteText.textContent = quote;
-        quoteText.style.opacity = '1';
-    }, 300);
-}
-
-// 點擊按鈕更換激勵語
-newQuoteBtn.addEventListener('click', updateQuote);
 
 // 隨機更新學習小貼士
 function updateStudyTips() {
@@ -497,23 +453,25 @@ if (document.readyState === 'loading') {
 
 // 初始化頁面
 function initPage() {
+    // 載入保存的模式設定
     loadSavedMode();
-    updateCountdown();
+    
+    // 更新版權年份
     updateCopyrightYear();
-    updateQuote();
-    parallaxEffect();
     
-    // 每天隨機更新學習小貼士
-    const tomorrow = new Date();
-    tomorrow.setHours(24, 0, 0, 0);
-    const timeUntilTomorrow = tomorrow - new Date();
+    // 更新學習小貼士
+    updateStudyTips();
     
-    setTimeout(() => {
-        updateStudyTips();
-        // 每24小時更新一次
-        setInterval(updateStudyTips, 24 * 60 * 60 * 1000);
-    }, timeUntilTomorrow);
+    // 設置彈出視窗
+    setupPopups();
+    
+    // 更新倒數計時
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+    
+    // 設置視差效果
+    window.addEventListener('mousemove', parallaxEffect);
 }
 
-// 頁面加載後初始化
-window.addEventListener('load', initPage); 
+// 頁面載入完成後初始化
+document.addEventListener('DOMContentLoaded', initPage); 
