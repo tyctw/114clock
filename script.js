@@ -1,5 +1,5 @@
-// 設定目標日期（2026年5月23日）
-const targetDate = new Date('2026-05-23T00:00:00');
+// 設定目標日期（2026年5月16日）
+const targetDate = new Date('2026-05-16T00:00:00');
 const startDate = new Date('2023-05-23T00:00:00'); // 假設從2023年5月23日開始倒數
 
 // 備考小貼士數組
