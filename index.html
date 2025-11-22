@@ -1,279 +1,574 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>115會考倒數計時器</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div class="noise-overlay"></div>
-    <div class="gradient-circle circle-1"></div>
-    <div class="gradient-circle circle-2"></div>
-    <div class="gradient-circle circle-3"></div>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>115會考倒數衝刺站</title>
     
-    <header class="header">
-        <div class="theme-section">
-            <div class="mode-switcher">
-                <button id="mode-toggle" title="切換深淺模式">
-                    <i class="fas fa-moon" id="mode-icon"></i>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Tailwind Config -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: '#3b82f6',
+              secondary: '#64748b',
+              accent: '#f59e0b',
+            }
+          }
+        }
+      }
+    </script>
+
+    <style>
+      body {
+        font-family: 'Noto Sans TC', sans-serif;
+        background-color: #f8fafc;
+      }
+      .gradient-text {
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+        background-image: linear-gradient(to right, #2563eb, #4f46e5);
+      }
+      /* Mobile Menu Transition */
+      #mobile-menu {
+        transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+      }
+      #mobile-menu.open {
+        max-height: 280px; /* Increased height for new item */
+        opacity: 1;
+      }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body class="text-slate-900 pb-12 min-h-screen bg-slate-50">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50 backdrop-blur-md bg-white/80">
+        <div class="max-w-5xl mx-auto px-4 py-3">
+            <div class="flex items-center justify-between">
+                <!-- Logo & Title -->
+                <div class="flex items-center gap-3">
+                    <div class="bg-blue-600 p-2 rounded-lg text-white shadow-lg shadow-blue-200">
+                        <i data-lucide="graduation-cap" width="24" height="24"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl sm:text-2xl font-black tracking-tight text-slate-800">
+                            115 會考倒數
+                        </h1>
+                        <p class="text-xs text-slate-500 font-medium hidden sm:block">
+                            2026 Junior High School Comprehensive Assessment
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <nav class="hidden md:flex items-center gap-1">
+                    <a href="https://rcpett.vercel.app/" target="_blank" class="px-4 py-2 text-sm font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition-all mr-2 flex items-center gap-2">
+                        <i data-lucide="bar-chart-3" width="16" height="16"></i>
+                        落點分析
+                    </a>
+                    <a href="https://ceecc.vercel.app/" target="_blank" class="px-3 py-2 text-sm font-bold text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all">
+                        學測倒數
+                    </a>
+                    <a href="https://ceeecc.vercel.app/" target="_blank" class="px-3 py-2 text-sm font-bold text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all">
+                        分科倒數
+                    </a>
+                    <a href="https://tcte.onrender.com/" target="_blank" class="px-3 py-2 text-sm font-bold text-slate-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all">
+                        統測倒數
+                    </a>
+                </nav>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors" aria-label="開啟選單">
+                    <i data-lucide="menu" width="24" height="24"></i>
                 </button>
             </div>
-            <div class="theme-switcher">
-                <span class="theme-label">主題</span>
-                <div class="theme-options">
-                    <button class="theme-btn blue active" data-theme="blue"><span></span></button>
-                    <button class="theme-btn purple" data-theme="purple"><span></span></button>
-                    <button class="theme-btn green" data-theme="green"><span></span></button>
-                    <button class="theme-btn orange" data-theme="orange"><span></span></button>
+
+            <!-- Mobile Dropdown Menu -->
+            <div id="mobile-menu" class="md:hidden border-t border-slate-100 mt-3">
+                <div class="flex flex-col gap-1 py-2">
+                    <a href="https://rcpett.vercel.app/" target="_blank" class="flex items-center justify-between px-4 py-3 text-indigo-700 bg-indigo-50 hover:bg-indigo-100 rounded-lg font-bold group">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="bar-chart-3" width="18" height="18"></i>
+                            <span>會考落點分析</span>
+                        </div>
+                        <i data-lucide="external-link" width="16" height="16" class="text-indigo-400 group-hover:text-indigo-600"></i>
+                    </a>
+                    <a href="https://ceecc.vercel.app/" target="_blank" class="flex items-center justify-between px-4 py-3 text-slate-700 hover:bg-slate-50 rounded-lg font-medium group">
+                        <span>學測倒數</span>
+                        <i data-lucide="external-link" width="16" height="16" class="text-slate-400 group-hover:text-blue-500"></i>
+                    </a>
+                    <a href="https://ceeecc.vercel.app/" target="_blank" class="flex items-center justify-between px-4 py-3 text-slate-700 hover:bg-slate-50 rounded-lg font-medium group">
+                        <span>分科倒數</span>
+                        <i data-lucide="external-link" width="16" height="16" class="text-slate-400 group-hover:text-blue-500"></i>
+                    </a>
+                    <a href="https://tcte.onrender.com/" target="_blank" class="flex items-center justify-between px-4 py-3 text-slate-700 hover:bg-slate-50 rounded-lg font-medium group">
+                        <span>統測倒數</span>
+                        <i data-lucide="external-link" width="16" height="16" class="text-slate-400 group-hover:text-blue-500"></i>
+                    </a>
                 </div>
             </div>
-        </div>
-        
-        <div class="menu-button">
-            <span class="menu-icon">
-                <span class="line line-1"></span>
-                <span class="line line-2"></span>
-                <span class="line line-3"></span>
-            </span>
         </div>
     </header>
-    
-    <div class="fullscreen-menu">
-        <div class="menu-content">
-            <button class="close-menu-btn" title="關閉菜單">
-                <i class="fas fa-times"></i>
-            </button>
-            <div class="menu-header">
-                <h2>速查連結</h2>
+
+    <main class="max-w-5xl mx-auto px-4 pt-8 space-y-8">
+        
+        <!-- Countdowns Section -->
+        <div id="countdowns-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Dynamic Content will be injected here -->
+            <div class="bg-white p-6 rounded-2xl shadow animate-pulse h-48"></div>
+            <div class="bg-white p-6 rounded-2xl shadow animate-pulse h-48"></div>
+        </div>
+
+        <!-- Quotes Section -->
+        <div id="ai-coach-container">
+            <!-- Dynamic Content -->
+        </div>
+
+        <!-- Promo Banner -->
+        <a href="https://rcpett.vercel.app/" target="_blank" class="block group relative overflow-hidden rounded-2xl shadow-md transition-all hover:shadow-lg hover:-translate-y-1">
+            <div class="absolute inset-0 bg-gradient-to-r from-indigo-600 to-purple-600 opacity-90 group-hover:opacity-100 transition-opacity"></div>
+            <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMSIgY3k9IjEiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4xKSIvPjwvc3ZnPg==')] opacity-30"></div>
+            <div class="relative p-6 flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="bg-white/20 p-3 rounded-xl text-white backdrop-blur-sm">
+                        <i data-lucide="bar-chart-big" width="32" height="32"></i>
+                    </div>
+                    <div class="text-white">
+                        <h3 class="text-xl font-bold mb-1">會考落點分析系統</h3>
+                        <p class="text-indigo-100 text-sm font-medium">考後必備！精準預測你的志願落點，選擇最適合的學校</p>
+                    </div>
+                </div>
+                <div class="hidden sm:flex items-center gap-2 bg-white text-indigo-600 px-4 py-2 rounded-full font-bold text-sm shadow-sm group-hover:bg-indigo-50 transition-colors">
+                    <span>立即前往</span>
+                    <i data-lucide="arrow-right" width="16" height="16"></i>
+                </div>
             </div>
-            <div class="menu-links">
-                <a href="https://tcte.onrender.com/" target="_blank" class="menu-item">
-                    <div class="icon-wrapper">
-                        <i class="fas fa-graduation-cap"></i>
-                    </div>
-                    <span>統測倒數</span>
-                </a>
-                <a href="https://ceecc.vercel.app/" target="_blank" class="menu-item">
-                    <div class="icon-wrapper">
-                        <i class="fas fa-university"></i>
-                    </div>
-                    <span>學測倒數</span>
-                </a>
-                <a href="https://ceeecc.vercel.app/" target="_blank" class="menu-item">
-                    <div class="icon-wrapper">
-                        <i class="fas fa-pencil-alt"></i>
-                    </div>
-                    <span>分科倒數</span>
-                </a>
+        </a>
+
+        <!-- Timeline Section -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+            <h3 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+                <i data-lucide="calendar-days" class="text-blue-600"></i>
+                重要日程表 (民國115年)
+            </h3>
+            
+            <div class="relative pl-4">
+                <!-- Vertical Line -->
+                <div class="absolute left-[27px] top-2 bottom-4 w-0.5 bg-slate-200"></div>
+                <div id="timeline-events" class="space-y-8">
+                    <!-- Events will be injected here -->
+                </div>
             </div>
         </div>
-    </div>
-    
-    <main class="main-container">
-        <section class="title-section">
-            <h1 class="main-title">115會考<span class="accent-text">倒數計時</span></h1>
-            <div class="title-decoration">
-                <div class="line-decoration"></div>
-                <div class="dot-decoration"></div>
-                <div class="line-decoration"></div>
-            </div>
-        </section>
-        
-        <section class="countdown-section">
-            <div class="countdown-items">
-                <div class="countdown-item">
-                    <div class="digit-card">
-                        <div class="digit-inner">
-                            <span id="days">00</span>
-                        </div>
-                        <div class="card-reflection"></div>
-                    </div>
-                    <span class="label">天</span>
-                </div>
-                <div class="countdown-item">
-                    <div class="digit-card">
-                        <div class="digit-inner">
-                            <span id="hours">00</span>
-                        </div>
-                        <div class="card-reflection"></div>
-                    </div>
-                    <span class="label">時</span>
-                </div>
-                <div class="countdown-item">
-                    <div class="digit-card">
-                        <div class="digit-inner">
-                            <span id="minutes">00</span>
-                        </div>
-                        <div class="card-reflection"></div>
-                    </div>
-                    <span class="label">分</span>
-                </div>
-                <div class="countdown-item">
-                    <div class="digit-card">
-                        <div class="digit-inner">
-                            <span id="seconds">00</span>
-                        </div>
-                        <div class="card-reflection"></div>
-                    </div>
-                    <span class="label">秒</span>
-                </div>
-            </div>
+
+        <!-- Footer -->
+        <footer class="text-center text-slate-400 text-sm py-8">
+            <p>資料來源：教育部國教署及全國試務會 (以官方最新公告為準)</p>
+            <p class="mt-2 opacity-60">加油，未來的你正在等你。</p>
+        </footer>
+
+    </main>
+
+    <!-- Application Logic -->
+    <script>
+        // --- Constants & Data ---
+        const YEAR_AD = 2026;
+        const EXAM_EVENTS = [
+            {
+                id: 'registration',
+                title: '國中會考報名',
+                startDate: new Date(YEAR_AD, 2, 5), // March 5
+                endDate: new Date(YEAR_AD, 2, 7),   // March 7
+                note: '115/03/05 ~ 115/03/07'
+            },
+            {
+                id: 'admit_card',
+                title: '國中會考寄發准考證',
+                startDate: new Date(YEAR_AD, 3, 10), // April 10
+                note: '115/04/10'
+            },
+            {
+                id: 'exam_day',
+                title: '國中會考日期',
+                startDate: new Date(YEAR_AD, 4, 16), // May 16
+                endDate: new Date(YEAR_AD, 4, 17),   // May 17
+                note: '115/05/16 ~ 115/05/17',
+                isMainExam: true
+            },
+            {
+                id: 'score_release',
+                title: '國中會考成績公布',
+                startDate: new Date(YEAR_AD, 5, 5), // June 5
+                note: '115/06/05'
+            },
+            {
+                id: 'rank_release',
+                title: '個人序位區間公告',
+                startDate: new Date(YEAR_AD, 5, 18), // June 18
+                note: '115/06/18'
+            },
+            {
+                id: 'volunteer_start',
+                title: '就學區免試入學填志願',
+                startDate: new Date(YEAR_AD, 5, 18), // June 18
+                note: '115/06/18（開始）'
+            },
+            {
+                id: 'placement_result',
+                title: '就學區免試入學放榜',
+                startDate: new Date(YEAR_AD, 6, 7), // July 7
+                note: '115/07/07（放榜依各地區時間為主）'
+            },
+            {
+                id: 'reporting',
+                title: '免試入學報到',
+                startDate: new Date(YEAR_AD, 6, 9), // July 9
+                note: '115/07/09'
+            }
+        ];
+
+        const LOCAL_QUOTES = [
+            "堅持不是因為看到希望，而是堅持了才看到希望。",
+            "未來的你，會感謝現在拼命的自己。",
+            "不需要很厲害才能開始，但要開始了才會很厲害。",
+            "你現在流的汗水，會變成查榜時喜極而泣的淚水。",
+            "寧願辛苦一陣子，不要辛苦一輩子。",
+            "每天進步一點點，115會考就是你的舞台。",
+            "考場如戰場，筆桿就是你的槍，冷靜應戰！",
+            "專注當下，別讓焦慮偷走你的時間。",
+            "休息是為了走更長遠的路，但別忘了回來。",
+            "相信自己，你的潛力超乎你的想像。",
+            "夢想不會發光，發光的是追逐夢想的你。",
+            "不要在該奮鬥的年紀選擇安逸。",
+            "每一次練習，都是為了在考場上更完美地綻放。",
+            "成功沒有捷徑，只有腳踏實地的努力。",
+            "比你優秀的人都還在努力，你憑什麼喊累？",
+            "把不會的題目弄懂，就是分數提升的開始。",
+            "會考只是人生的轉運站，但請努力搭上你想去的那班車。",
+            "這條路雖然孤單，但盡頭有繁花盛開。",
+            "不放手，直到夢想到手。",
+            "保持平常心，發揮實力，你一定可以！"
+        ];
+
+        // --- Utils ---
+        function calculateTimeRemaining(targetDate) {
+            const now = new Date();
+            const target = new Date(targetDate);
+            target.setHours(0, 0, 0, 0); // Target midnight start of day
+
+            const diff = target.getTime() - now.getTime();
+
+            if (diff <= 0) {
+                return { days: 0, hours: 0, minutes: 0, seconds: 0, totalSeconds: 0 };
+            }
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            return { days, hours, minutes, seconds, totalSeconds: diff / 1000 };
+        }
+
+        function formatROCDate(date) {
+            const year = date.getFullYear() - 1911;
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const day = date.getDate().toString().padStart(2, '0');
+            return `${year}/${month}/${day}`;
+        }
+
+        function getDayOfWeek(date) {
+            const days = ['週日', '週一', '週二', '週三', '週四', '週五', '週六'];
+            return days[date.getDay()];
+        }
+
+        // --- Render Functions ---
+
+        function createCountdownHTML(targetDate, title, subtitle, isHighlight, eventId, endDate) {
+            const timeLeft = calculateTimeRemaining(targetDate);
+            const now = new Date();
             
-            <div class="progress-info">
-                <div class="progress-container">
-                    <div class="progress-bar" id="progress-bar"></div>
-                    <div class="progress-percent-container">
-                        <span id="progress-percent">0%</span>
-                    </div>
-                </div>
-            </div>
+            // Determine Event State
+            // 1. Not Arrived yet (Standard Countdown)
+            // 2. In Progress (Now >= Start AND Now <= End)
+            // 3. Finished (Now > End)
             
-            <div class="exam-date">
-                <i class="far fa-calendar-alt"></i>
-                <p>考試日期：2026年5月16日 - 17日</p>
-            </div>
-        </section>
-        
-        <section class="ad-section">
-            <div class="ad-container">
-                <div class="ad-header">
-                    <h3>實用升學資源</h3>
-                </div>
-                <div class="ad-content">
-                    <div class="ad-text">
-                        <h4>全國會考落點分析</h4>
-                        <p>精準分析，助您選擇最適合的理想學校</p>
-                        <ul class="ad-features">
-                            <li>全方位數據評估</li>
-                            <li>歷年趨勢分析</li>
-                            <li>各區域學校比較</li>
-                            <li>精準志願選填建議</li>
-                        </ul>
-                        <a href="https://rcpett.vercel.app/" target="_blank" class="ad-button">
-                            立即查詢
-                            <i class="fas fa-arrow-right"></i>
+            let isFinished = false;
+            let isInProgress = false;
+            
+            if (timeLeft.totalSeconds <= 0) {
+                if (endDate) {
+                    const end = new Date(endDate);
+                    end.setHours(23, 59, 59, 999);
+                    if (now > end) {
+                        isFinished = true;
+                    } else {
+                        isInProgress = true;
+                    }
+                } else {
+                    // If no end date, assume finished on that day
+                    isFinished = true; 
+                }
+            }
+
+            // Special Highlight Styles for Main Exam Finish
+            let bgClass = isHighlight 
+                ? 'bg-gradient-to-br from-blue-600 to-indigo-700 text-white ring-4 ring-blue-100' 
+                : 'bg-white text-slate-800 border border-slate-200';
+            
+            let iconName = isHighlight ? 'timer' : 'calendar-clock';
+            let iconColor = isHighlight ? 'text-white' : 'text-slate-800';
+            let labelColor = isHighlight ? 'text-blue-200' : 'text-slate-500';
+            let numberBg = isHighlight ? 'bg-white/10 backdrop-blur-sm' : 'bg-slate-100';
+
+            // Override styles for Finished Main Exam
+            if (eventId === 'exam_day' && isFinished) {
+                bgClass = 'bg-gradient-to-br from-yellow-500 to-amber-600 text-white ring-4 ring-amber-100';
+                iconName = 'trophy';
+                iconColor = 'text-white';
+                labelColor = 'text-yellow-100';
+                numberBg = 'bg-white/20';
+            }
+
+            let contentHtml = '';
+
+            if (isInProgress && eventId === 'exam_day') {
+                contentHtml = `
+                    <div class="mt-6 text-center">
+                        <div class="text-2xl font-bold animate-pulse mb-2">考試進行中！</div>
+                        <p class="text-blue-100 text-sm">保持冷靜，發揮實力</p>
+                    </div>
+                `;
+            } else if (isFinished && eventId === 'exam_day') {
+                contentHtml = `
+                    <div class="mt-6 text-center">
+                        <div class="text-2xl sm:text-3xl font-black mb-2">恭喜完賽！</div>
+                        <p class="text-yellow-100 text-sm font-medium">辛苦了！祝金榜題名</p>
+                        <a href="https://rcpett.vercel.app/" target="_blank" class="inline-flex items-center gap-1 mt-4 px-4 py-2 bg-white text-amber-600 rounded-full text-xs font-bold shadow-lg hover:bg-amber-50 transition-colors">
+                            <i data-lucide="bar-chart-3" width="14" height="14"></i>
+                            <span>立即落點分析</span>
                         </a>
                     </div>
-                    <div class="ad-image">
-                        <div class="image-container">
-                            <i class="fas fa-chart-line"></i>
+                `;
+            } else if (timeLeft.totalSeconds <= 0) {
+                contentHtml = `<div class="text-3xl font-bold mt-6">今日發生 / 已結束</div>`;
+            } else {
+                const timeUnit = (val, label) => `
+                    <div class="flex flex-col items-center p-2 rounded-lg ${numberBg}">
+                        <span class="text-2xl sm:text-3xl font-mono font-bold ${iconColor}">${val}</span>
+                        <span class="text-xs ${labelColor}">${label}</span>
+                    </div>
+                `;
+                contentHtml = `
+                    <div class="mt-6 grid grid-cols-4 gap-2 text-center">
+                        ${timeUnit(timeLeft.days, '天')}
+                        ${timeUnit(timeLeft.hours, '時')}
+                        ${timeUnit(timeLeft.minutes, '分')}
+                        ${timeUnit(timeLeft.seconds, '秒')}
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="relative overflow-hidden rounded-2xl p-6 shadow-lg transition-all duration-300 hover:shadow-xl ${bgClass}">
+                    <div class="absolute -right-6 -top-6 opacity-10 rotate-12">
+                        <i data-lucide="${iconName}" width="150" height="150"></i>
+                    </div>
+                    <div class="relative z-10 flex flex-col h-full justify-between">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <h2 class="text-lg font-bold tracking-wide uppercase ${eventId === 'exam_day' && isFinished ? 'text-yellow-100' : (isHighlight ? 'text-blue-100' : 'text-slate-500')}">
+                                    ${title}
+                                </h2>
+                                ${isHighlight && !isFinished ? '<span class="bg-amber-400 text-amber-900 text-xs font-bold px-2 py-0.5 rounded-full">TARGET</span>' : ''}
+                            </div>
+                            ${subtitle ? `<p class="text-sm ${eventId === 'exam_day' && isFinished ? 'text-yellow-100/80' : (isHighlight ? 'text-blue-200' : 'text-slate-400')}">${subtitle}</p>` : ''}
+                        </div>
+                        ${contentHtml}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderCountdowns() {
+            const now = new Date();
+            const mainExam = EXAM_EVENTS.find(e => e.isMainExam);
+            const nextEvent = EXAM_EVENTS.find(e => {
+                const target = e.endDate || e.startDate;
+                const endOfDay = new Date(target);
+                endOfDay.setHours(23, 59, 59, 999);
+                return endOfDay > now;
+            });
+
+            const container = document.getElementById('countdowns-container');
+            let html = '';
+
+            if (mainExam) {
+                html += createCountdownHTML(mainExam.startDate, "距離國中會考", mainExam.note, true, mainExam.id, mainExam.endDate);
+            }
+
+            if (nextEvent && nextEvent.id !== mainExam?.id) {
+                html += createCountdownHTML(nextEvent.startDate, `距離 ${nextEvent.title}`, nextEvent.note, false, nextEvent.id, nextEvent.endDate);
+            }
+
+            container.innerHTML = html;
+            
+            if (window.lucide) window.lucide.createIcons();
+        }
+
+        function renderTimeline() {
+            const now = new Date();
+            now.setHours(0, 0, 0, 0);
+
+            const container = document.getElementById('timeline-events');
+            const html = EXAM_EVENTS.map(event => {
+                const isPast = event.endDate ? event.endDate < now : event.startDate < now;
+                const isCurrent = (() => {
+                    if (event.endDate) {
+                        return now >= event.startDate && now <= event.endDate;
+                    }
+                    return now.getTime() === event.startDate.getTime();
+                })();
+
+                const icon = isPast ? 'check-circle-2' : isCurrent ? 'map-pin' : 'circle';
+                const iconColorClass = isCurrent 
+                    ? 'border-blue-600 text-blue-600 scale-125 shadow-md shadow-blue-200 bg-white' 
+                    : isPast 
+                        ? 'border-slate-400 text-slate-400 bg-white' 
+                        : 'border-slate-300 text-slate-300 bg-white';
+                
+                const titleColor = isCurrent ? 'text-blue-700' : 'text-slate-800';
+                const dateColor = isCurrent ? 'text-blue-600 font-bold' : 'text-slate-500';
+
+                return `
+                    <div class="relative flex gap-4 group ${isPast ? 'opacity-60' : ''}">
+                        <div class="relative z-10 flex-shrink-0 w-6 h-6 mt-1 rounded-full border-2 flex items-center justify-center transition-transform ${iconColorClass}">
+                            <i data-lucide="${icon}" width="${isCurrent ? 16 : (isPast ? 16 : 12)}" class="${isCurrent ? 'fill-blue-600 text-white' : (isPast ? '' : 'fill-white')}"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex flex-wrap items-baseline justify-between gap-2">
+                                <h4 class="font-bold text-lg ${titleColor}">${event.title}</h4>
+                                <span class="text-sm font-mono ${dateColor}">
+                                    ${formatROCDate(event.startDate)} (${getDayOfWeek(event.startDate)})
+                                </span>
+                            </div>
+                            <p class="text-slate-600 mt-1 text-sm">${event.note}</p>
+                            ${event.isMainExam && !isPast ? '<div class="mt-2 inline-block px-3 py-1 bg-red-100 text-red-700 text-xs font-bold rounded-full">關鍵決戰日</div>' : ''}
                         </div>
                     </div>
-                </div>
-            </div>
-        </section>
-        
+                `;
+            }).join('');
 
-        
-        <section class="features-section">
-            <div class="feature-card study-tips-card">
-                <div class="card-header">
-                    <div class="header-icon">
-                        <i class="fas fa-lightbulb"></i>
-                    </div>
-                    <h3>備考小貼士</h3>
-                </div>
-                <div class="card-content">
-                    <p class="card-description">查看實用的會考備考小貼士，幫助您制定有效的學習計畫。</p>
-                    <button class="popup-trigger" id="tips-trigger">
-                        <span>查看貼士</span>
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
-                </div>
-            </div>
+            container.innerHTML = html;
+            if (window.lucide) window.lucide.createIcons();
+        }
+
+        // --- Quote / Motivation Logic ---
+        function initQuotes() {
+            const container = document.getElementById('ai-coach-container');
             
-            <div class="feature-card key-dates-card">
-                <div class="card-header">
-                    <div class="header-icon">
-                        <i class="fas fa-calendar-check"></i>
-                    </div>
-                    <h3>重要日期</h3>
-                </div>
-                <div class="card-content">
-                    <p class="card-description">了解會考相關的重要時間點，確保不錯過任何關鍵日期。</p>
-                    <button class="popup-trigger" id="dates-trigger">
-                        <span>查看日期</span>
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
-                </div>
-            </div>
-        </section>
-    </main>
-    
-    <footer class="footer">
-        <p>© <span id="current-year"></span> 115會考倒數計時器. 版權所有.</p>
-    </footer>
-    
-    <!-- 彈出視窗 -->
-    <div class="popup-overlay" id="tips-popup">
-        <div class="popup-container">
-            <div class="popup-header">
-                <h3><i class="fas fa-lightbulb"></i> 備考小貼士</h3>
-                <button class="popup-close" title="關閉">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="popup-content">
-                <ul class="tips-list" id="tips-list">
-                    <li>建立讀書計劃，合理分配時間</li>
-                    <li>掌握核心概念，不必死記硬背</li>
-                    <li>定期複習，避免遺忘曲線</li>
-                    <li>做好筆記，整理重點</li>
-                    <li>適當休息，保持身心健康</li>
-                </ul>
-                <button id="new-tips-btn" class="refresh-btn">
-                    <i class="fas fa-sync-alt"></i>
-                    <span>換一批貼士</span>
-                </button>
-            </div>
-        </div>
-    </div>
-    
-    <div class="popup-overlay" id="dates-popup">
-        <div class="popup-container">
-            <div class="popup-header">
-                <h3><i class="fas fa-calendar-check"></i> 重要日期</h3>
-                <button class="popup-close" title="關閉">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="popup-content">
-                <div class="timeline">
-                    <div class="timeline-item">
-                        <div class="date-chip">2025/12/15</div>
-                        <div class="date-info">115會考報名開始</div>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="date-chip">2026/01/15</div>
-                        <div class="date-info">115會考報名截止</div>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="date-chip">2026/04/15</div>
-                        <div class="date-info">准考證寄發</div>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="date-chip highlight">2026/05/16-17</div>
-                        <div class="date-info">會考日期</div>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="date-chip">2026/06/10</div>
-                        <div class="date-info">成績公布</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <script src="script.js"></script>
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-H9X7EC127P"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+            // Pick a random quote
+            const getRandomQuote = () => LOCAL_QUOTES[Math.floor(Math.random() * LOCAL_QUOTES.length)];
 
-  gtag('config', 'G-H9X7EC127P');
-</script>
+            const renderQuote = (text, isLoading = false) => {
+                container.innerHTML = `
+                    <div class="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-100 rounded-2xl p-6 shadow-sm relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-4 opacity-5">
+                            <i data-lucide="sparkles" width="120" height="120" class="text-amber-500"></i>
+                        </div>
+                        <div class="relative z-10">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center gap-2 text-amber-800 font-bold">
+                                    <i data-lucide="zap" width="20" height="20"></i>
+                                    <span>每日會考戰鬥格言</span>
+                                </div>
+                                <button id="refresh-quote-btn" class="p-2 text-amber-600 hover:bg-amber-100 rounded-full transition-colors ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}" ${isLoading ? 'disabled' : ''}>
+                                    <i data-lucide="refresh-cw" width="18" height="18" class="${isLoading ? 'animate-spin' : ''}"></i>
+                                </button>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="text-amber-300 flex-shrink-0 -mt-1 transform scale-x-[-1]">
+                                    <i data-lucide="quote" width="32" height="32"></i>
+                                </div>
+                                <p class="text-lg text-slate-700 font-medium leading-relaxed italic transition-opacity duration-300 ${isLoading ? 'opacity-50' : 'opacity-100'}">
+                                    ${text}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                if (window.lucide) window.lucide.createIcons();
+                
+                const btn = document.getElementById('refresh-quote-btn');
+                if(btn) btn.onclick = () => refreshQuote();
+            };
+
+            const refreshQuote = () => {
+                // Show loading state briefly for UX
+                renderQuote("正在尋找靈感...", true);
+                
+                setTimeout(() => {
+                    renderQuote(getRandomQuote());
+                }, 400); // Short delay to make the refresh feel "real"
+            };
+
+            // Initial load
+            renderQuote(getRandomQuote());
+        }
+
+        function initMobileMenu() {
+            const btn = document.getElementById('mobile-menu-btn');
+            const menu = document.getElementById('mobile-menu');
+            
+            if (btn && menu) {
+                btn.addEventListener('click', () => {
+                    menu.classList.toggle('open');
+                });
+            }
+        }
+
+        // --- Main Init ---
+        function init() {
+            renderCountdowns();
+            setInterval(renderCountdowns, 1000);
+            renderTimeline();
+            initQuotes(); // Replaces initAiCoach
+            initMobileMenu();
+        }
+
+        // Start when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+
+    </script>
+<script type="module" src="/index.tsx"></script>
 </body>
-</html> 
+</html>
